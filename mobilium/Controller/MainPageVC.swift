@@ -11,6 +11,9 @@ import Kingfisher
 class MainPageVC: UIViewController {
     
     let movieManager = MovieManager()
+    var searchedMovies: [MovieModel] = []
+    var upcomingMovies: [MovieModel] = []
+    var nowPlayingMovies: [MovieModel] = []
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var inTheatersView: UICollectionView!
@@ -19,9 +22,9 @@ class MainPageVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl)
-        movieManager.fetchUsing(urlType: MovieManager.upcomingUrl)
         upcomingList.dataSource = self
+        upcomingList.register(UINib(nibName: "UpcomingCell", bundle: nil), forCellReuseIdentifier: "upcomingCell")
+        loadMovies()
         //inTheatersView.delegate = self
         //inTheatersView.dataSource = self
     }
@@ -29,6 +32,16 @@ class MainPageVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
         searchBar.delegate = self
+    }
+    
+    func loadMovies() {
+        upcomingMovies = []
+        nowPlayingMovies = []
+        movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl, targetArray: nowPlayingMovies)
+        movieManager.fetchUsing(urlType: MovieManager.upcomingUrl, targetArray: upcomingMovies)
+        DispatchQueue.main.async {
+            self.upcomingList.reloadData()
+        }
     }
 }
 
@@ -38,7 +51,7 @@ extension MainPageVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let queryText = searchBar.text ?? ""
         if queryText.count > 1 {
-            movieManager.searchMovie(movieName: queryText)
+            movieManager.searchMovie(movieName: queryText, targetArray: searchedMovies)
             // enable the tableview and fill the rows with results
         }
     }
@@ -55,16 +68,28 @@ extension MainPageVC: UISearchBarDelegate {
     }
 }
 
-//Mark: - UITableViewDelegate
-extension MainPageVC: UITableViewDataSource {
+//Mark: - UITableViewDataSource
+extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        movieManager.movies.count
+        //movieManager.movies.count
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "upcomingCell", for: indexPath)
-        cell.textLabel?.text = "Movie"
+        let cell = tableView.dequeueReusableCell(withIdentifier: "upcomingCell", for: indexPath) as! UpcomingCell
+        //cell.movieTitle.text = upcomingMovies[0].movieTitle
+        //cell.movieCover.kf.setImage(with: URL(string: upcomingMovies[0].posterLink))
+        //cell.movieDescription.text = upcomingMovies[0].movieOverview
+        cell.movieTitle.text = "Lol Movie(2007)"
+        cell.movieCover.kf.setImage(with: URL(string: "https://www.themoviedb.org/t/p/w185/lykPQ7lgrLJPwLlSyetVXsl2wDf.jpg"))
+        cell.movieDescription.text = "upcomingMovies[0].movieOverview"
         return cell
+    }
+    
+    //Mark: - UITableViewDelegate
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        //create segue to DetailVC
     }
 }
 

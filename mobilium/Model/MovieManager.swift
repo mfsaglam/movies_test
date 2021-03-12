@@ -9,9 +9,7 @@ import UIKit
 import Alamofire
 
 class MovieManager {
-    
-    var movies: [MovieModel] = []
-    
+
     static let apiKey = "57b1a612ee027e0ecf15aadabf38d177"
     let imageBaseUrl = "https://image.tmdb.org/t/p/w185/"
     
@@ -21,36 +19,37 @@ class MovieManager {
     
     let searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&language=en-US&include_adult=false"
     
-    func searchMovie(movieName: String) {
+    func searchMovie(movieName: String, targetArray: [MovieModel]) {
         let urlString = "\(searchUrl)&query=\(movieName)".replacingOccurrences(of: " ", with: "%20")
         AF.request(urlString).response { responseData in
             if let safeData = responseData.data {
                 //print(String(data: safeData, encoding: .utf8) ?? "nil")
-                self.parseJSON(movieData: safeData)
+                self.parseJSON(movieData: safeData, addTo: targetArray)
             } else {
                 print(responseData.error?.errorDescription ?? "error nil")
             }
         }
     }
     
-    func fetchUsing(urlType: String) {
+    func fetchUsing(urlType: String, targetArray: [MovieModel]) {
         AF.request(urlType).response { responseData in
             if let safeData = responseData.data {
-                self.parseJSON(movieData: safeData)
+                self.parseJSON(movieData: safeData, addTo: targetArray)
             } else {
                 print(responseData.error?.errorDescription ?? "error nil")
             }
         }
     }
     
-    func parseJSON(movieData: Data) {
+    func parseJSON(movieData: Data, addTo: [MovieModel]) {
+        var targetArray = addTo
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(MovieData.self, from: movieData)
             for data in decodedData.results {
                 if data.poster_path != nil {
                     let movie: MovieModel = MovieModel(posterLink: imageBaseUrl + data.poster_path!, movieTitle: data.title!, movieOverview: data.overview!, imdbVote: "\(data.vote_average!)")
-                    movies.append(movie)
+                    targetArray.append(movie)
                 }
             }
             print("movies loaded")
