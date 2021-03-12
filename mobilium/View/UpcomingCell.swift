@@ -16,7 +16,7 @@ class UpcomingCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        movieCover.layer.cornerRadius = movieCover.frame.size.height / 8
+        movieCover.layer.cornerRadius = movieCover.frame.size.height / 10
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

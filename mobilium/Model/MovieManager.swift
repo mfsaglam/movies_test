@@ -19,40 +19,42 @@ class MovieManager {
     
     let searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&language=en-US&include_adult=false"
     
-    func searchMovie(movieName: String, targetArray: [MovieModel]) {
+    let similarUrl = "" //paste similar URL here
+    
+    func searchMovie(movieName: String, completion: @escaping ([MovieModel]) -> Void) {
         let urlString = "\(searchUrl)&query=\(movieName)".replacingOccurrences(of: " ", with: "%20")
         AF.request(urlString).response { responseData in
             if let safeData = responseData.data {
                 //print(String(data: safeData, encoding: .utf8) ?? "nil")
-                self.parseJSON(movieData: safeData, addTo: targetArray)
+                self.parseJSON(movieData: safeData, completion: completion)
             } else {
                 print(responseData.error?.errorDescription ?? "error nil")
             }
         }
     }
     
-    func fetchUsing(urlType: String, targetArray: [MovieModel]) {
+    func fetchUsing(urlType: String, completion: @escaping ([MovieModel]) -> Void) {
         AF.request(urlType).response { responseData in
             if let safeData = responseData.data {
-                self.parseJSON(movieData: safeData, addTo: targetArray)
+                self.parseJSON(movieData: safeData, completion: completion)
             } else {
                 print(responseData.error?.errorDescription ?? "error nil")
             }
         }
     }
     
-    func parseJSON(movieData: Data, addTo: [MovieModel]) {
-        var targetArray = addTo
+    func parseJSON(movieData: Data, completion: @escaping ([MovieModel]) -> Void ) {
         let decoder = JSONDecoder()
         do {
+            var results: [MovieModel] = []
             let decodedData = try decoder.decode(MovieData.self, from: movieData)
             for data in decodedData.results {
                 if data.poster_path != nil {
                     let movie: MovieModel = MovieModel(posterLink: imageBaseUrl + data.poster_path!, movieTitle: data.title!, movieOverview: data.overview!, imdbVote: "\(data.vote_average!)")
-                    targetArray.append(movie)
+                    results.append(movie)
                 }
             }
-            print("movies loaded")
+            completion(results)
         } catch {
             print(error)
         }

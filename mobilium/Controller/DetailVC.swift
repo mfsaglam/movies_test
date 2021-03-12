@@ -9,6 +9,15 @@ import UIKit
 
 class DetailVC: UIViewController {
     
+    var movieManager = MovieManager()
+    var similarMovies: [MovieModel] = []
+    
+    var movie: MovieModel? {
+        didSet {
+            
+        }
+    }
+    
     @IBOutlet weak var detailImage: UIImageView!
     @IBOutlet weak var movieTitle: UILabel!
     @IBOutlet weak var movieDetail: UILabel!

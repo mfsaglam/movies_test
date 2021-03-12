@@ -22,25 +22,45 @@ class MainPageVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
         upcomingList.dataSource = self
+        inTheatersView.dataSource = self
+        inTheatersView.delegate = self
+        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = .zero
+        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing = .zero
+        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = inTheatersView.frame.size
+        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing = .zero
+
+        inTheatersView.automaticallyAdjustsScrollIndicatorInsets = false
         upcomingList.register(UINib(nibName: "UpcomingCell", bundle: nil), forCellReuseIdentifier: "upcomingCell")
+        inTheatersView.register(UINib(nibName: "NowPlayingCell", bundle: nil), forCellWithReuseIdentifier: "nowPlayingCell")
         loadMovies()
-        //inTheatersView.delegate = self
-        //inTheatersView.dataSource = self
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        inTheatersView.collectionViewLayout.invalidateLayout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
-        searchBar.delegate = self
     }
     
     func loadMovies() {
-        upcomingMovies = []
-        nowPlayingMovies = []
-        movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl, targetArray: nowPlayingMovies)
-        movieManager.fetchUsing(urlType: MovieManager.upcomingUrl, targetArray: upcomingMovies)
-        DispatchQueue.main.async {
-            self.upcomingList.reloadData()
+        movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl) { [weak self] results in
+            guard let self = self else { return }
+            self.nowPlayingMovies = results
+            DispatchQueue.main.async {
+                self.inTheatersView.reloadData()
+            }
+        }
+        movieManager.fetchUsing(urlType: MovieManager.upcomingUrl) { [weak self] results in
+            guard let self = self else { return }
+            self.upcomingMovies = results
+            DispatchQueue.main.async {
+                self.upcomingList.reloadData()
+            }
         }
     }
 }
@@ -51,7 +71,9 @@ extension MainPageVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let queryText = searchBar.text ?? ""
         if queryText.count > 1 {
-            movieManager.searchMovie(movieName: queryText, targetArray: searchedMovies)
+            movieManager.searchMovie(movieName: queryText) { results in
+                print(results)
+            }
             // enable the tableview and fill the rows with results
         }
     }
@@ -71,18 +93,15 @@ extension MainPageVC: UISearchBarDelegate {
 //Mark: - UITableViewDataSource
 extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //movieManager.movies.count
-        return 5
+        return upcomingMovies.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "upcomingCell", for: indexPath) as! UpcomingCell
-        //cell.movieTitle.text = upcomingMovies[0].movieTitle
-        //cell.movieCover.kf.setImage(with: URL(string: upcomingMovies[0].posterLink))
-        //cell.movieDescription.text = upcomingMovies[0].movieOverview
-        cell.movieTitle.text = "Lol Movie(2007)"
-        cell.movieCover.kf.setImage(with: URL(string: "https://www.themoviedb.org/t/p/w185/lykPQ7lgrLJPwLlSyetVXsl2wDf.jpg"))
-        cell.movieDescription.text = "upcomingMovies[0].movieOverview"
+        let movie = upcomingMovies[indexPath.row]
+        cell.movieTitle.text = movie.movieTitle
+        cell.movieCover.kf.setImage(with: URL(string: movie.posterLink))
+        cell.movieDescription.text = movie.movieOverview
         return cell
     }
     
@@ -94,13 +113,35 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
 }
 
 //Mark: - UICollectionViewDelegate
-//extension MainPageVC: UICollectionViewDelegate, UICollectionViewDataSource {
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//
-//    }
-//}
+extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return nowPlayingMovies.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        print(collectionView.frame.size)
+        return CGSize(width: 414, height: 50)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return .zero
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return .zero
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return .zero
+    }
+    
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nowPlayingCell", for: indexPath) as! NowPlayingCell
+        let movie = nowPlayingMovies[indexPath.row]
+        cell.cover.kf.setImage(with: URL(string: movie.posterLink))
+        cell.title.text = movie.movieTitle
+        return cell
+    }
+}
 
