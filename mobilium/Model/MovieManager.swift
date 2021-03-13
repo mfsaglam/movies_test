@@ -11,7 +11,7 @@ import Alamofire
 class MovieManager {
 
     static let apiKey = "57b1a612ee027e0ecf15aadabf38d177"
-    let imageBaseUrl = "https://image.tmdb.org/t/p/w185/"
+    let imageBaseUrl = "https://image.tmdb.org/t/p/w300/"
     
     static let nowPlayingUrl = "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&language=en-US"
     

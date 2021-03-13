@@ -14,7 +14,6 @@ class NowPlayingCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        self.cover.contentMode = .scaleAspectFill
     }
-
 }

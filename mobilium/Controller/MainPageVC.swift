@@ -14,6 +14,7 @@ class MainPageVC: UIViewController {
     var searchedMovies: [MovieModel] = []
     var upcomingMovies: [MovieModel] = []
     var nowPlayingMovies: [MovieModel] = []
+    var detailViewMovie: MovieModel?
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var inTheatersView: UICollectionView!
@@ -23,23 +24,23 @@ class MainPageVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
+        upcomingList.delegate = self
         upcomingList.dataSource = self
         inTheatersView.dataSource = self
         inTheatersView.delegate = self
-        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.sectionInset = .zero
-        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumLineSpacing = .zero
-        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = inTheatersView.frame.size
-        (inTheatersView.collectionViewLayout as? UICollectionViewFlowLayout)?.minimumInteritemSpacing = .zero
-
-        inTheatersView.automaticallyAdjustsScrollIndicatorInsets = false
+        inTheatersView.isPagingEnabled = true
+        
+        let flowLayout = UICollectionViewFlowLayout.init()
+        flowLayout.scrollDirection = .horizontal
+        inTheatersView.collectionViewLayout = flowLayout
+        
         upcomingList.register(UINib(nibName: "UpcomingCell", bundle: nil), forCellReuseIdentifier: "upcomingCell")
         inTheatersView.register(UINib(nibName: "NowPlayingCell", bundle: nil), forCellWithReuseIdentifier: "nowPlayingCell")
         loadMovies()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        inTheatersView.collectionViewLayout.invalidateLayout()
+        
+        self.sliderControl.numberOfPages = self.nowPlayingMovies.count
+        //Returns zero
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,6 +56,7 @@ class MainPageVC: UIViewController {
                 self.inTheatersView.reloadData()
             }
         }
+        
         movieManager.fetchUsing(urlType: MovieManager.upcomingUrl) { [weak self] results in
             guard let self = self else { return }
             self.upcomingMovies = results
@@ -90,7 +92,7 @@ extension MainPageVC: UISearchBarDelegate {
     }
 }
 
-//Mark: - UITableViewDataSource
+//Mark: - UITableViewDataSource, UITableViewDelegate
 extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return upcomingMovies.count
@@ -105,37 +107,49 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    //Mark: - UITableViewDelegate
-    
+//Mark: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //create segue to DetailVC
+        detailViewMovie = upcomingMovies[indexPath.row]
+        self.performSegue(withIdentifier: "showDetailView", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showDetailView" {
+            let destinationVC = segue.destination as! DetailVC
+            destinationVC.movie = detailViewMovie
+        }
     }
 }
 
-//Mark: - UICollectionViewDelegate
+//Mark: - UICollectionViewDelegate, UICollectionViewDataSource
 extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
+    //UITableViewDelegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return nowPlayingMovies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         print(collectionView.frame.size)
-        return CGSize(width: 414, height: 50)
+        return inTheatersView.frame.size
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return .zero
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return .zero
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return .zero
     }
     
-
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.sliderControl.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
+    }
+    
+//Mark: - UICollectionViewDataSource Methods
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nowPlayingCell", for: indexPath) as! NowPlayingCell
         let movie = nowPlayingMovies[indexPath.row]
