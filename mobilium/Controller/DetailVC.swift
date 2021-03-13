@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import SafariServices
 
 class DetailVC: UIViewController {
     
@@ -20,7 +21,6 @@ class DetailVC: UIViewController {
             detailImage?.kf.setImage(with: URL(string: movie?.posterLink ?? ""))
             imdbRate?.text = movie?.imdbVote
             loadSimilarMovies()
-            //TODO: - set imdb image with link
         }
     }
     
@@ -30,7 +30,8 @@ class DetailVC: UIViewController {
     @IBOutlet weak var similarMoviesHeader: UILabel!
     @IBOutlet weak var similarMoviesSlider: UICollectionView!
     @IBOutlet weak var imdbRate: UILabel!
-    @IBOutlet weak var imdbLogo: UIImageView!
+    @IBOutlet weak var imdbButton: UIButton!
+    
     
 //    init?(movie: MovieModel, coder: NSCoder) {
 //        super.init(coder: coder)
@@ -40,8 +41,6 @@ class DetailVC: UIViewController {
 //    required init?(coder: NSCoder) {
 //        super.init(coder: coder)
 //    }
-    
-    //TODO: - create a transparent button on the imdb logo and when the user clicks it, call the getMovieİd function(it will give me a string in completion) to trigger safariView
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +58,15 @@ class DetailVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
+    }
+    
+    @IBAction func imdbButtonTapped(_ sender: Any) {
+        movieManager.getImdbId(movieId: movie?.id ?? "") { (imdbId) in
+            guard let url = URL(string: "https://www.imdb.com/title/\(imdbId)/") else { return }
+            let safariVC = SFSafariViewController(url: url)
+            self.present(safariVC, animated: true, completion: nil)
+            safariVC.delegate = self
+        }
     }
     
     func loadSimilarMovies() {
@@ -85,7 +93,28 @@ extension DetailVC: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.image.kf.setImage(with: URL(string: movie.posterLink))
         cell.title.text = movie.movieTitle
         return cell
-        //TODO - : set Cells sizes 126 200 (sizeforItemAt)
-        //TODO - : İnseteri zero döndür...
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 126, height: 200)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return .zero
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return .zero
+    }
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return .zero
+    }
+}
+
+//MARK: - SFSafariViewControllerDelegate
+extension DetailVC: SFSafariViewControllerDelegate {
+    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        controller.dismiss(animated: true, completion: nil)
     }
 }
