@@ -37,10 +37,6 @@ class MainPageVC: UIViewController {
         upcomingList.register(UINib(nibName: "UpcomingCell", bundle: nil), forCellReuseIdentifier: "upcomingCell")
         inTheatersView.register(UINib(nibName: "NowPlayingCell", bundle: nil), forCellWithReuseIdentifier: "nowPlayingCell")
         loadMovies()
-        
-        self.sliderControl.numberOfPages = self.nowPlayingMovies.count
-        //Returns zero
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,12 +44,17 @@ class MainPageVC: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
     }
     
-    func loadMovies() {
+    private func refleshSliderControl() {
+        self.sliderControl.numberOfPages = self.nowPlayingMovies.count
+    }
+    
+    private func loadMovies() {
         movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl) { [weak self] results in
             guard let self = self else { return }
             self.nowPlayingMovies = results
             DispatchQueue.main.async {
                 self.inTheatersView.reloadData()
+                self.refleshSliderControl()
             }
         }
         
@@ -67,7 +68,7 @@ class MainPageVC: UIViewController {
     }
 }
 
-//Mark: - UISearchBarDelegate
+//MARK: - UISearchBarDelegate
 extension MainPageVC: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -76,7 +77,7 @@ extension MainPageVC: UISearchBarDelegate {
             movieManager.searchMovie(movieName: queryText) { results in
                 print(results)
             }
-            // enable the tableview and fill the rows with results
+            //TODO: - enable the tableview and fill the rows with results
         }
     }
     
@@ -92,7 +93,7 @@ extension MainPageVC: UISearchBarDelegate {
     }
 }
 
-//Mark: - UITableViewDataSource, UITableViewDelegate
+//MARK: - UITableViewDataSource, UITableViewDelegate
 extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return upcomingMovies.count
@@ -107,7 +108,7 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-//Mark: - UITableViewDelegate
+//MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         detailViewMovie = upcomingMovies[indexPath.row]
         self.performSegue(withIdentifier: "showDetailView", sender: self)
@@ -116,12 +117,14 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetailView" {
             let destinationVC = segue.destination as! DetailVC
+            let _ = destinationVC.view
             destinationVC.movie = detailViewMovie
+            //TODO: - It sends but view didnt loaded
         }
     }
 }
 
-//Mark: - UICollectionViewDelegate, UICollectionViewDataSource
+//MARK: - UICollectionViewDelegate, UICollectionViewDataSource
 extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     //UITableViewDelegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -129,7 +132,6 @@ extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        print(collectionView.frame.size)
         return inTheatersView.frame.size
     }
     
@@ -149,7 +151,9 @@ extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSo
         self.sliderControl.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
     }
     
-//Mark: - UICollectionViewDataSource Methods
+    //TODO: - Make Bulletpoints active for touching
+    
+//MARK: - UICollectionViewDataSource Methods
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nowPlayingCell", for: indexPath) as! NowPlayingCell
         let movie = nowPlayingMovies[indexPath.row]

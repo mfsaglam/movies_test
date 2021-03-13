@@ -13,5 +13,5 @@ struct MovieModel {
     var movieTitle: String
     var movieOverview: String
     var imdbVote: String
-    //Add IMDB id
+    var id: String
 }
