@@ -19,7 +19,7 @@ class MovieManager {
     
     let searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&language=en-US&include_adult=false"
         
-    func searchMovie(movieName: String, completion: @escaping ([MovieModel]) -> Void) {
+    func searchMovie(movieName: String, completion: @escaping ([MovieModel], Error?) -> Void) {
         let urlString = "\(searchUrl)&query=\(movieName)".replacingOccurrences(of: " ", with: "%20")
         AF.request(urlString).response { responseData in
             if let safeData = responseData.data {
@@ -30,7 +30,7 @@ class MovieManager {
         }
     }
     
-    func fetchUsing(urlType: String, completion: @escaping ([MovieModel]) -> Void) {
+    func fetchUsing(urlType: String, completion: @escaping ([MovieModel], Error?) -> Void) {
         AF.request(urlType).response { responseData in
             if let safeData = responseData.data {
                 self.parseJSON(movieData: safeData, completion: completion)
@@ -40,32 +40,36 @@ class MovieManager {
         }
     }
     
-    func getImdbId(movieId: String, completion: @escaping (String) -> Void) {
+    func getImdbId(movieId: String, completion: @escaping (String, Error?) -> Void) {
         let urlString = "https://api.themoviedb.org/3/movie/\(movieId)/external_ids?api_key=\(MovieManager.apiKey)"
         AF.request(urlString).response { responseData in
             if let safeData = responseData.data {
-                self.parseSingleObjectJSON(movieData: safeData) { (result) in
-                    completion(result.imdb_id)
+                self.parseSingleObjectJSON(movieData: safeData) { (result, error) in
+                    if error != nil {
+                        completion("", error)
+                    } else {
+                        completion(result?.imdb_id ?? "", nil)
+                    }
                 }
             } else {
-                print(responseData.error?.errorDescription ?? "error nil")
+                completion("", responseData.error)
             }
         }
         //TODO: - Return IMDB id here
     }
     
-    func getSimilarMovies(movieId: String, completion: @escaping ([MovieModel]) -> Void) {
+    func getSimilarMovies(movieId: String, completion: @escaping ([MovieModel], Error?) -> Void) {
         let urlString = "https://api.themoviedb.org/3/movie/\(movieId)/similar?api_key=\(MovieManager.apiKey)&language=en-US"
         AF.request(urlString).response { responseData in
             if let safeData = responseData.data {
                 self.parseJSON(movieData: safeData, completion: completion)
             } else {
-                print(responseData.error?.errorDescription ?? "error nil")
+                completion([], responseData.error)
             }
         }
     }
     
-    func parseJSON(movieData: Data, completion: @escaping ([MovieModel]) -> Void ) {
+    func parseJSON(movieData: Data, completion: @escaping ([MovieModel], Error?) -> Void ) {
         let decoder = JSONDecoder()
         do {
             var resultsArray: [MovieModel] = []
@@ -76,19 +80,19 @@ class MovieManager {
                     resultsArray.append(movie)
                 }
             }
-            completion(resultsArray)
+            completion(resultsArray, nil)
         } catch {
-            print(error)
+            completion([], error)
         }
     }
     
-    func parseSingleObjectJSON(movieData: Data, completion: @escaping (MovieModelJson) -> Void ) {
+    func parseSingleObjectJSON(movieData: Data, completion: @escaping (MovieModelJson?, Error?) -> Void ) {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(MovieModelJson.self, from: movieData)
-            completion(decodedData)
+            completion(decodedData, nil)
         } catch {
-            print(error)
+            completion(nil, error)
         }
     }
 }

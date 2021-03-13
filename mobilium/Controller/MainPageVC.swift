@@ -34,6 +34,8 @@ class MainPageVC: UIViewController {
         searchResultsList.dataSource = self
         inTheatersView.isPagingEnabled = true
         searchResultsList.isHidden = true
+        searchBar.showsCancelButton = true
+        self.sliderControl.isUserInteractionEnabled = false
         
         let flowLayout = UICollectionViewFlowLayout.init()
         flowLayout.scrollDirection = .horizontal
@@ -54,20 +56,18 @@ class MainPageVC: UIViewController {
     }
     
     private func loadMovies() {
-        movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl) { [weak self] results in
-            guard let self = self else { return }
-            self.nowPlayingMovies = results
+        movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl) { [weak self] (results, error) in
+            self?.nowPlayingMovies = results
             DispatchQueue.main.async {
-                self.inTheatersView.reloadData()
-                self.refleshSliderControl()
+                self?.inTheatersView.reloadData()
+                self?.refleshSliderControl()
             }
         }
         
-        movieManager.fetchUsing(urlType: MovieManager.upcomingUrl) { [weak self] results in
-            guard let self = self else { return }
-            self.upcomingMovies = results
+        movieManager.fetchUsing(urlType: MovieManager.upcomingUrl) { [weak self] (results, error) in
+            self?.upcomingMovies = results
             DispatchQueue.main.async {
-                self.upcomingList.reloadData()
+                self?.upcomingList.reloadData()
             }
         }
     }
@@ -79,20 +79,23 @@ extension MainPageVC: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         let queryText = searchBar.text ?? ""
         if queryText.count > 1 {
-            movieManager.searchMovie(movieName: queryText) { results in
-                self.searchResults = results
-                self.searchResultsList.isHidden = false
-                self.searchResultsList.reloadData()
+            movieManager.searchMovie(movieName: queryText) { [ weak self ] (results, error) in
+                self?.searchResults = results
+                self?.searchResultsList.isHidden = false
+                self?.sliderControl.isHidden = true
+                self?.searchResultsList.reloadData()
             }
-            //TODO: - enable the tableview and fill the rows with results
         } else if queryText.count == 0 {
             self.searchResultsList.isHidden = true
+            self.sliderControl.isHidden = false
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = ""
         searchBar.resignFirstResponder()
+        self.view.endEditing(true)
+        self.searchResultsList.isHidden = true
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

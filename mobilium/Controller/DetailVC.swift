@@ -1,6 +1,6 @@
 //
 //  DetailVCViewController.swift
-//  mobilium
+//  mobillium
 //
 //  Created by Fatih Sağlam on 10.03.2021.
 //
@@ -16,6 +16,7 @@ class DetailVC: UIViewController {
     
     var movie: MovieModel? {
         didSet {
+            self.title = movie?.movieTitle
             movieTitle?.text = movie?.movieTitle
             movieDetail?.text = movie?.movieOverview
             detailImage?.kf.setImage(with: URL(string: movie?.posterLink ?? ""))
@@ -26,7 +27,7 @@ class DetailVC: UIViewController {
     
     @IBOutlet weak var detailImage: UIImageView!
     @IBOutlet weak var movieTitle: UILabel!
-    @IBOutlet weak var movieDetail: UILabel!
+    @IBOutlet weak var movieDetail: UITextView!
     @IBOutlet weak var similarMoviesHeader: UILabel!
     @IBOutlet weak var similarMoviesSlider: UICollectionView!
     @IBOutlet weak var imdbRate: UILabel!
@@ -61,27 +62,29 @@ class DetailVC: UIViewController {
     }
     
     @IBAction func imdbButtonTapped(_ sender: Any) {
-        movieManager.getImdbId(movieId: movie?.id ?? "") { (imdbId) in
+        movieManager.getImdbId(movieId: movie?.id ?? "") { [ weak self ] (imdbId, error) in
             guard let url = URL(string: "https://www.imdb.com/title/\(imdbId)/") else { return }
             let safariVC = SFSafariViewController(url: url)
-            self.present(safariVC, animated: true, completion: nil)
+            self?.present(safariVC, animated: true, completion: nil)
             safariVC.delegate = self
         }
     }
     
     func loadSimilarMovies() {
         if movie != nil {
-            movieManager.getSimilarMovies(movieId: movie!.id) { [weak self] results in
-                guard let self = self else { return }
-                self.similarMovies = results
-                self.similarMoviesSlider.reloadData()
+            movieManager.getSimilarMovies(movieId: movie!.id) { [ weak self ] (results, error) in
+                guard error == nil else {
+                    //TODO: - show alert here
+                    return }
+                self?.similarMovies = results
+                self?.similarMoviesSlider.reloadData()
             }
         }
     }
 }
 
 //MARK: - UICollectionViewDataSource, UICollectionViewDelegate
-extension DetailVC: UICollectionViewDelegate, UICollectionViewDataSource {
+extension DetailVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return similarMovies.count
