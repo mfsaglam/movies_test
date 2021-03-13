@@ -112,6 +112,12 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         detailViewMovie = upcomingMovies[indexPath.row]
         self.performSegue(withIdentifier: "showDetailView", sender: self)
+//        let movie = upcomingMovies[indexPath.row]
+//        let vc = UIStoryboard.init(name: "Main", bundle: .main).instantiateViewController(identifier: "DetailVC") { (coder) -> UIViewController? in
+//            let detailVC = DetailVC.init(movie: movie, coder: coder)
+//            return detailVC
+//        }
+//        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

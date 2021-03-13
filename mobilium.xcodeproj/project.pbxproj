@@ -24,6 +24,7 @@
 		12636F7D25FBEEA400B2BAE5 /* NowPlayingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 12636F7B25FBEEA400B2BAE5 /* NowPlayingCell.xib */; };
 		1298902125FCB29900E8AF5C /* SimilarMoviesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1298901F25FCB29900E8AF5C /* SimilarMoviesCell.swift */; };
 		1298902225FCB29900E8AF5C /* SimilarMoviesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1298902025FCB29900E8AF5C /* SimilarMoviesCell.xib */; };
+		1298902525FCE6BC00E8AF5C /* MovieModelJson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1298902425FCE6BC00E8AF5C /* MovieModelJson.swift */; };
 		52C6C234B08AE11743A11D99 /* Pods_mobilium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E381BF0E239BEF8DAB0C98E /* Pods_mobilium.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,7 @@
 		12636F7B25FBEEA400B2BAE5 /* NowPlayingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NowPlayingCell.xib; sourceTree = "<group>"; };
 		1298901F25FCB29900E8AF5C /* SimilarMoviesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarMoviesCell.swift; sourceTree = "<group>"; };
 		1298902025FCB29900E8AF5C /* SimilarMoviesCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SimilarMoviesCell.xib; sourceTree = "<group>"; };
+		1298902425FCE6BC00E8AF5C /* MovieModelJson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieModelJson.swift; sourceTree = "<group>"; };
 		1E381BF0E239BEF8DAB0C98E /* Pods_mobilium.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_mobilium.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		210DE65D5235A88B1D4B048C /* Pods-mobilium.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobilium.debug.xcconfig"; path = "Target Support Files/Pods-mobilium/Pods-mobilium.debug.xcconfig"; sourceTree = "<group>"; };
 		D3C5DE616CC3308DB829D703 /* Pods-mobilium.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobilium.release.xcconfig"; path = "Target Support Files/Pods-mobilium/Pods-mobilium.release.xcconfig"; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				12636F6225F966EB00B2BAE5 /* MovieManager.swift */,
+				1298902425FCE6BC00E8AF5C /* MovieModelJson.swift */,
 				12636F7225FAA53100B2BAE5 /* MovieModel.swift */,
 				12636F6E25F9D26100B2BAE5 /* MovieData.swift */,
 			);
@@ -279,6 +282,7 @@
 				12636F6025F9665300B2BAE5 /* Constants.swift in Sources */,
 				12636F4525F9507B00B2BAE5 /* MainPageVC.swift in Sources */,
 				12636F6325F966EB00B2BAE5 /* MovieManager.swift in Sources */,
+				1298902525FCE6BC00E8AF5C /* MovieModelJson.swift in Sources */,
 				12636F7325FAA53100B2BAE5 /* MovieModel.swift in Sources */,
 				12636F4125F9507B00B2BAE5 /* AppDelegate.swift in Sources */,
 				12636F5625F950F000B2BAE5 /* DetailVC.swift in Sources */,

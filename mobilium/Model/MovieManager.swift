@@ -40,16 +40,17 @@ class MovieManager {
         }
     }
     
-    func getImdbId(movieId: String, completion: @escaping ([MovieModel]) -> Void) -> String {
+    func getImdbId(movieId: String, completion: @escaping (String) -> Void) {
         let urlString = "https://api.themoviedb.org/3/movie/\(movieId)/external_ids?api_key=\(MovieManager.apiKey)"
         AF.request(urlString).response { responseData in
             if let safeData = responseData.data {
-                self.parseJSON(movieData: safeData, completion: completion)
+                self.parseSingleObjectJSON(movieData: safeData) { (result) in
+                    completion(result.imdb_id)
+                }
             } else {
                 print(responseData.error?.errorDescription ?? "error nil")
             }
         }
-        return ""
         //TODO: - Return IMDB id here
     }
     
@@ -76,6 +77,16 @@ class MovieManager {
                 }
             }
             completion(resultsArray)
+        } catch {
+            print(error)
+        }
+    }
+    
+    func parseSingleObjectJSON(movieData: Data, completion: @escaping (MovieModelJson) -> Void ) {
+        let decoder = JSONDecoder()
+        do {
+            let decodedData = try decoder.decode(MovieModelJson.self, from: movieData)
+            completion(decodedData)
         } catch {
             print(error)
         }
