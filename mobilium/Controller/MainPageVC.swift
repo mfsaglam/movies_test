@@ -108,6 +108,7 @@ extension MainPageVC: UISearchBarDelegate {
         searchBar.resignFirstResponder()
         self.view.endEditing(true)
         self.searchResultsList.isHidden = true
+        self.sliderControl.isHidden = false
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -146,7 +147,10 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return K.upcomingHeader
+        if tableView == upcomingList {
+            return K.upcomingHeader
+        }
+        return ""
     }
     
 //MARK: - UITableViewDelegate
