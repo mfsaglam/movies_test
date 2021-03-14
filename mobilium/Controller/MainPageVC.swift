@@ -41,8 +41,8 @@ class MainPageVC: UIViewController {
         flowLayout.scrollDirection = .horizontal
         inTheatersView.collectionViewLayout = flowLayout
         
-        upcomingList.register(UINib(nibName: "UpcomingCell", bundle: nil), forCellReuseIdentifier: "upcomingCell")
-        inTheatersView.register(UINib(nibName: "NowPlayingCell", bundle: nil), forCellWithReuseIdentifier: "nowPlayingCell")
+        upcomingList.register(UINib(nibName: K.upcomingCellNib, bundle: nil), forCellReuseIdentifier: K.upcomingCellId)
+        inTheatersView.register(UINib(nibName: K.nowPlayingCellNib, bundle: nil), forCellWithReuseIdentifier: K.nowPlayingCellId)
         loadMovies()
     }
     
@@ -57,6 +57,10 @@ class MainPageVC: UIViewController {
     
     private func loadMovies() {
         movieManager.fetchUsing(urlType: MovieManager.nowPlayingUrl) { [weak self] (results, error) in
+            guard error == nil else {
+                //show alert here
+                return
+            }
             self?.nowPlayingMovies = results
             DispatchQueue.main.async {
                 self?.inTheatersView.reloadData()
@@ -65,6 +69,10 @@ class MainPageVC: UIViewController {
         }
         
         movieManager.fetchUsing(urlType: MovieManager.upcomingUrl) { [weak self] (results, error) in
+            guard error == nil else {
+                //show alert here
+                return
+            }
             self?.upcomingMovies = results
             DispatchQueue.main.async {
                 self?.upcomingList.reloadData()
@@ -80,6 +88,10 @@ extension MainPageVC: UISearchBarDelegate {
         let queryText = searchBar.text ?? ""
         if queryText.count > 1 {
             movieManager.searchMovie(movieName: queryText) { [ weak self ] (results, error) in
+                guard error == nil else {
+                    //show alert here
+                    return
+                }
                 self?.searchResults = results
                 self?.searchResultsList.isHidden = false
                 self?.sliderControl.isHidden = true
@@ -118,14 +130,14 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if tableView == upcomingList {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "upcomingCell", for: indexPath) as! UpcomingCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: K.upcomingCellId, for: indexPath) as! UpcomingCell
             let movie = upcomingMovies[indexPath.row]
             cell.movieTitle.text = movie.movieTitle
             cell.movieCover.kf.setImage(with: URL(string: movie.posterLink))
             cell.movieDescription.text = movie.movieOverview
             return cell
         } else if tableView == searchResultsList {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "searchResultsCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: K.searchResultsCellId, for: indexPath)
             let movie = searchResults[indexPath.row]
             cell.textLabel?.text = movie.movieTitle
             return cell
@@ -133,19 +145,23 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
         return UITableViewCell()
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return K.upcomingHeader
+    }
+    
 //MARK: - UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == upcomingList {
             detailViewMovie = upcomingMovies[indexPath.row]
-            self.performSegue(withIdentifier: "showDetailView", sender: self)
+            self.performSegue(withIdentifier: K.detailViewSegue, sender: self)
         } else if tableView == searchResultsList {
             detailViewMovie = searchResults[indexPath.row]
-            self.performSegue(withIdentifier: "showDetailView", sender: self)
+            self.performSegue(withIdentifier: K.detailViewSegue, sender: self)
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetailView" {
+        if segue.identifier == K.detailViewSegue {
             let destinationVC = segue.destination as! DetailVC
             let _ = destinationVC.view
             destinationVC.movie = detailViewMovie
@@ -182,12 +198,12 @@ extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSo
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         detailViewMovie = nowPlayingMovies[indexPath.row]
-        self.performSegue(withIdentifier: "showDetailView", sender: self)
+        self.performSegue(withIdentifier: K.detailViewSegue, sender: self)
     }
 
 //MARK: - UICollectionViewDataSource Methods
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nowPlayingCell", for: indexPath) as! NowPlayingCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.nowPlayingCellId, for: indexPath) as! NowPlayingCell
         let movie = nowPlayingMovies[indexPath.row]
         cell.cover.kf.setImage(with: URL(string: movie.posterLink))
         cell.title.text = movie.movieTitle

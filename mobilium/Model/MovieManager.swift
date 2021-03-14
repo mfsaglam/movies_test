@@ -12,11 +12,8 @@ class MovieManager {
 
     static let apiKey = "57b1a612ee027e0ecf15aadabf38d177"
     let imageBaseUrl = "https://image.tmdb.org/t/p/w300/"
-    
     static let nowPlayingUrl = "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)&language=en-US"
-    
     static let upcomingUrl = "https://api.themoviedb.org/3/movie/upcoming?api_key=\(apiKey)&language=en-US"
-    
     let searchUrl = "https://api.themoviedb.org/3/search/movie?api_key=\(apiKey)&language=en-US&include_adult=false"
         
     func searchMovie(movieName: String, completion: @escaping ([MovieModel], Error?) -> Void) {

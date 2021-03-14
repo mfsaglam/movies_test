@@ -8,7 +8,6 @@
 import Foundation
 
 struct MovieModel {
-    
     var posterLink: String
     var movieTitle: String
     var movieOverview: String

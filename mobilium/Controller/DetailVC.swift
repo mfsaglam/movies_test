@@ -20,7 +20,7 @@ class DetailVC: UIViewController {
             movieTitle?.text = movie?.movieTitle
             movieDetail?.text = movie?.movieOverview
             detailImage?.kf.setImage(with: URL(string: movie?.posterLink ?? ""))
-            imdbRate?.text = movie?.imdbVote
+            imdbRate?.text = movie?.imdbVote == "0.0" ? K.imdbVoteAlternative : movie?.imdbVote
             loadSimilarMovies()
         }
     }
@@ -44,7 +44,7 @@ class DetailVC: UIViewController {
         flowLayout.scrollDirection = .horizontal
         similarMoviesSlider.collectionViewLayout = flowLayout
         
-        similarMoviesSlider.register(UINib(nibName: "SimilarMoviesCell", bundle: nil), forCellWithReuseIdentifier: "similarMoviesCell")
+        similarMoviesSlider.register(UINib(nibName: K.similarCellNib, bundle: nil), forCellWithReuseIdentifier: K.similarCellId)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,7 +66,8 @@ class DetailVC: UIViewController {
             movieManager.getSimilarMovies(movieId: movie!.id) { [ weak self ] (results, error) in
                 guard error == nil else {
                     //TODO: - show alert here
-                    return }
+                    return
+                }
                 self?.similarMovies = results
                 self?.similarMoviesSlider.reloadData()
             }
@@ -83,14 +84,14 @@ extension DetailVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let movie = similarMovies[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "similarMoviesCell", for: indexPath) as! SimilarMoviesCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: K.similarCellId, for: indexPath) as! SimilarMoviesCell
         cell.image.kf.setImage(with: URL(string: movie.posterLink))
         cell.title.text = movie.movieTitle
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 126, height: 200)
+        return CGSize(width: K.similarCellWidth, height: K.similarCellHeight)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
