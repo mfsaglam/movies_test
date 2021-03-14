@@ -1,6 +1,6 @@
 //
 //  Constants.swift
-//  mobilium
+//  mobillium
 //
 //  Created by Fatih Sağlam on 10.03.2021.
 //

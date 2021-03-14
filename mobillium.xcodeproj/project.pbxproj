@@ -29,7 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		12636F3D25F9507B00B2BAE5 /* mobilium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mobilium.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		12636F3D25F9507B00B2BAE5 /* mobillium.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mobillium.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		12636F4025F9507B00B2BAE5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		12636F4225F9507B00B2BAE5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		12636F4425F9507B00B2BAE5 /* MainPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainPageVC.swift; sourceTree = "<group>"; };
@@ -79,7 +79,7 @@
 		12636F3E25F9507B00B2BAE5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				12636F3D25F9507B00B2BAE5 /* mobilium.app */,
+				12636F3D25F9507B00B2BAE5 /* mobillium.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -162,9 +162,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		12636F3C25F9507B00B2BAE5 /* mobilium */ = {
+		12636F3C25F9507B00B2BAE5 /* mobillium */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 12636F5125F9507D00B2BAE5 /* Build configuration list for PBXNativeTarget "mobilium" */;
+			buildConfigurationList = 12636F5125F9507D00B2BAE5 /* Build configuration list for PBXNativeTarget "mobillium" */;
 			buildPhases = (
 				AF55E477288B38C735C1A4E5 /* [CP] Check Pods Manifest.lock */,
 				12636F3925F9507B00B2BAE5 /* Sources */,
@@ -176,9 +176,9 @@
 			);
 			dependencies = (
 			);
-			name = mobilium;
+			name = mobillium;
 			productName = mobilium;
-			productReference = 12636F3D25F9507B00B2BAE5 /* mobilium.app */;
+			productReference = 12636F3D25F9507B00B2BAE5 /* mobillium.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -195,7 +195,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 12636F3825F9507B00B2BAE5 /* Build configuration list for PBXProject "mobilium" */;
+			buildConfigurationList = 12636F3825F9507B00B2BAE5 /* Build configuration list for PBXProject "mobillium" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -208,7 +208,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				12636F3C25F9507B00B2BAE5 /* mobilium */,
+				12636F3C25F9507B00B2BAE5 /* mobillium */,
 			);
 		};
 /* End PBXProject section */
@@ -472,7 +472,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		12636F3825F9507B00B2BAE5 /* Build configuration list for PBXProject "mobilium" */ = {
+		12636F3825F9507B00B2BAE5 /* Build configuration list for PBXProject "mobillium" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				12636F4F25F9507D00B2BAE5 /* Debug */,
@@ -481,7 +481,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		12636F5125F9507D00B2BAE5 /* Build configuration list for PBXNativeTarget "mobilium" */ = {
+		12636F5125F9507D00B2BAE5 /* Build configuration list for PBXNativeTarget "mobillium" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				12636F5225F9507D00B2BAE5 /* Debug */,

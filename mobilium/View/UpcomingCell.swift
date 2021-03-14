@@ -1,6 +1,6 @@
 //
 //  UpcomingCell.swift
-//  mobilium
+//  mobillium
 //
 //  Created by Fatih Sağlam on 12.03.2021.
 //

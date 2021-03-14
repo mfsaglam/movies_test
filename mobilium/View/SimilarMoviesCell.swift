@@ -1,6 +1,6 @@
 //
 //  SimilarMoviesCell.swift
-//  mobilium
+//  mobillium
 //
 //  Created by Fatih Sağlam on 13.03.2021.
 //

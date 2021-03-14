@@ -1,6 +1,6 @@
 //
 //  MovieModel.swift
-//  mobilium
+//  mobillium
 //
 //  Created by Fatih Sağlam on 11.03.2021.
 //
