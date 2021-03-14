@@ -12,7 +12,7 @@ class SimilarMoviesCell: UICollectionViewCell {
     @IBOutlet weak var title: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        image.layer.cornerRadius = image.frame.size.height / 8
     }
 
 }

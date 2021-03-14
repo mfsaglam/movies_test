@@ -32,16 +32,7 @@ class DetailVC: UIViewController {
     @IBOutlet weak var similarMoviesSlider: UICollectionView!
     @IBOutlet weak var imdbRate: UILabel!
     @IBOutlet weak var imdbButton: UIButton!
-    
-    
-//    init?(movie: MovieModel, coder: NSCoder) {
-//        super.init(coder: coder)
-//        self.movie = movie
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        super.init(coder: coder)
-//    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,6 +103,11 @@ extension DetailVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSour
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return .zero
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.movie = similarMovies[indexPath.row]
+        
     }
 }
 

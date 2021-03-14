@@ -142,13 +142,6 @@ extension MainPageVC: UITableViewDataSource, UITableViewDelegate {
             detailViewMovie = searchResults[indexPath.row]
             self.performSegue(withIdentifier: "showDetailView", sender: self)
         }
-        
-//        let movie = upcomingMovies[indexPath.row]
-//        let vc = UIStoryboard.init(name: "Main", bundle: .main).instantiateViewController(identifier: "DetailVC") { (coder) -> UIViewController? in
-//            let detailVC = DetailVC.init(movie: movie, coder: coder)
-//            return detailVC
-//        }
-//        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -191,9 +184,7 @@ extension MainPageVC: UICollectionViewDelegateFlowLayout, UICollectionViewDataSo
         detailViewMovie = nowPlayingMovies[indexPath.row]
         self.performSegue(withIdentifier: "showDetailView", sender: self)
     }
-    
-    //TODO: - Make Bulletpoints inactive for touching
-    
+
 //MARK: - UICollectionViewDataSource Methods
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "nowPlayingCell", for: indexPath) as! NowPlayingCell
