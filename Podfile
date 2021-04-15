@@ -1,6 +1,6 @@
 platform :ios, '10.0'
 
-target 'mobilium' do
+target 'mobillium' do
   
   use_frameworks!
 
